@@ -2,12 +2,21 @@ extern crate carcasian;
 
 use std::io;
 use std::io::{Read,Write};
+use std::net::TcpListener;
+use std::thread;
 use carcasian::*;
 use std::collections::HashMap;
 use carcasian::database::command::Command;
 
 fn main() {
-	println!("Welcome to Carcasian database! (Version: 0.0.1)");
+	let host = "127.0.0.1";
+	let port = "9821";
+
+	let server = format!("{}:{}", host, port);
+
+	let listener = TcpListener::bind("127.0.0.1:9821").unwrap(); // TODO: as_str() when RFC is approved
+
+	println!("Welcome to Carcasian database! Listening on {}", server);
 
 	let mut data: HashMap<String, String> = database::storage::new();
 	let mut input;
@@ -25,7 +34,7 @@ fn main() {
 
 		command.remove(0);
 
-		if command_name == "set" {
+		if command_name == "SET" {
 			command_result = database::set::Set::handle(&data, command_name, command);
 		}
 

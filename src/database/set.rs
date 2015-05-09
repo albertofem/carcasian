@@ -10,7 +10,7 @@ impl Command for Set {
 	fn handle(mut database: &HashMap<String, String>,
 			  command: &str,
 			  arguments: Vec<&str>) -> &'static str {
-		"1"
+		"(true)"
 	}
 }
 
