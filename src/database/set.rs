@@ -2,12 +2,14 @@ use std::collections::HashMap;
 
 use super::command::Command;
 
-struct Set {
+pub struct Set {
 	name: &'static str
 }
 
 impl Command for Set {
-	fn handle(mut database: HashMap<String, String>, command: &'static str) -> &'static str {
+	fn handle(mut database: &HashMap<String, String>,
+			  command: &str,
+			  arguments: Vec<&str>) -> &'static str {
 		"1"
 	}
 }
