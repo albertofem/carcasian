@@ -1,6 +1,5 @@
-pub mod set;
+pub mod setget;
 pub mod storage;
-pub mod command;
 
 mod database {
 

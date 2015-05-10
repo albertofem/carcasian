@@ -6,7 +6,6 @@ use std::net::TcpListener;
 use std::thread;
 use carcasian::*;
 use std::collections::HashMap;
-use carcasian::database::command::Command;
 
 fn main() {
 	let host = "127.0.0.1";
@@ -21,8 +20,6 @@ fn main() {
 	let mut data: HashMap<String, String> = database::storage::new();
 	let mut input;
 
-	let mut command_result: &str = "(nil)";
-
 	loop {
 		io::stdout().write("127.0.0.1:9821> ".as_bytes());
 		io::stdout().flush();
@@ -35,12 +32,12 @@ fn main() {
 		command.remove(0);
 
 		if command_name == "SET" {
-			command_result = database::set::Set::handle(&data, command_name, command);
+			println!("{}", database::setget::SetGet.set(&mut data, command[0], command[1]));
+		} else if command_name == "GET" {
+			println!("{}", database::setget::SetGet.get(&mut data, command[0]))
+		} else if command_name == "EXIT" {
+			break;
 		}
-
-		println!("{}", command_result);
-
-		command_result = "(nil)";
 	}
 }
 
