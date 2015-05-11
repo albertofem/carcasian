@@ -1,4 +1,12 @@
 [root]
 name = "carcasian"
 version = "0.0.1"
+dependencies = [
+ "argparse 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "argparse"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 

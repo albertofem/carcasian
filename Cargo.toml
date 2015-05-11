@@ -3,3 +3,19 @@
 name = "carcasian"
 version = "0.0.1"
 authors = ["albertofem"]
+
+[lib]
+name = "carcasian"
+path = "src/lib.rs"
+
+[[bin]]
+name = "carcasian-server"
+path = "src/server.rs"
+
+[[bin]]
+name = "carcasian-client"
+path = "src/client.rs"
+
+[dependencies]
+
+argparse = "*"
