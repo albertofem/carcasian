@@ -1,5 +1,4 @@
 [package]
-
 name = "carcasian"
 version = "0.0.1"
 authors = ["albertofem"]
@@ -17,5 +16,4 @@ name = "carcasian-client"
 path = "src/client.rs"
 
 [dependencies]
-
 argparse = "*"
