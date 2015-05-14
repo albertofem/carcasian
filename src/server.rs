@@ -5,6 +5,7 @@ use std::io;
 use std::io::{Read,Write};
 use std::net::{TcpListener,TcpStream};
 use std::thread;
+use std::str;
 use carcasian::*;
 use std::collections::HashMap;
 use argparse::{ArgumentParser, StoreTrue, Store};
@@ -22,7 +23,7 @@ fn main() {
 	server(&host, &port, &mut data);
 }
 
-fn server(host: &String, port: &String, data: &HashMap<String, String>) -> u8
+fn server(host: &String, port: &String, mut data: &mut HashMap<String, String>) -> u8
 {
 	let server: String = format!("{}:{}", host, port);
 
@@ -32,30 +33,15 @@ fn server(host: &String, port: &String, data: &HashMap<String, String>) -> u8
 		match stream {
 			Err(e) => { println!("failed: {}", e) }
 			Ok(stream) => {
-				thread::spawn(move || {
-					handle_client(stream)
-				});
+				handle_client(stream, &mut data)
 			}
 		}
-
-		/*let mut command: Vec<&str> = input.trim_right_matches("\n").split(" ").collect();
-		let command_name: &str = command.first().unwrap();
-
-		command.remove(0);
-
-		if command_name == "SET" {
-			stream.write(database::setget::SetGet.set(&mut data, command[0], command[1]));
-		} else if command_name == "GET" {
-			stream.write(database::setget::SetGet.get(&mut data, command[0]));
-		} else if command_name == "EXIT" {
-			stream.write("Bye");
-		}*/
 	}
 
 	0x000
 }
 
-fn handle_client(mut stream: TcpStream)
+fn handle_client(mut stream: TcpStream, database: &mut HashMap<String, String>)
 {
 	let mut buf;
 
@@ -73,9 +59,22 @@ fn handle_client(mut stream: TcpStream)
 			},
 		};
 
-		match stream.write(&buf) {
-			Err(_) => break,
-			Ok(_) => continue,
-		}
+		handle_message(str::from_utf8(&mut buf).unwrap().to_string(), &mut stream, database)
+	}
+}
+
+fn handle_message(input: String, stream: &mut TcpStream, mut data: &mut HashMap<String, String>)
+{
+	let mut command: Vec<&str> = input.trim_right_matches("\n").split(" ").collect();
+	let command_name: &str = command.first().unwrap();
+
+	command.remove(0);
+
+	if command_name == "SET" {
+		stream.write(database::setget::SetGet.set(&mut data, command[0], command[1]).as_bytes());
+	} else if command_name == "GET" {
+		stream.write(database::setget::SetGet.get(&mut data, command[0]).as_bytes());
+	} else if command_name == "EXIT" {
+		stream.write(b"Bye");
 	}
 }

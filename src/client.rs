@@ -17,7 +17,8 @@ fn main() {
 
 fn cli(host: &String, port: &String) -> u8
 {
-	let mut stream = TcpStream::connect("127.0.0.1:8991");
+	let server = format!("{}:{}", host, port);
+	let mut stream = TcpStream::connect(&*server);
 
 	match stream {
 		Err(e) => { println!("Unable to connect: {}", e) }
@@ -39,4 +40,9 @@ fn cli_loop(host: &String, port: &String, stream: &mut TcpStream) -> ()
 	let mut input = util::io::read_line();
 
 	stream.write(input.as_bytes());
+
+	let mut buf = [0];
+	stream.read(&mut buf);
+
+	println!("{:?}", buf);
 }
