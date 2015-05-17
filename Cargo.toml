@@ -17,3 +17,4 @@ path = "src/client.rs"
 
 [dependencies]
 argparse = "*"
+mio = "0.3.5"

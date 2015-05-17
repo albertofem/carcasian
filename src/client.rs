@@ -39,6 +39,8 @@ fn cli_loop(host: &String, port: &String, stream: &mut TcpStream) -> ()
 
 	let mut input = util::io::read_line();
 
+	println!("Sending to server: {}", input);
+
 	stream.write(input.as_bytes());
 
 	let mut buf = [0];
