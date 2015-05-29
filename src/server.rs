@@ -3,15 +3,27 @@ extern crate argparse;
 extern crate mio;
 
 use std::io;
-use std::io::{Read,Write};
+use std::io::{Read,Write,BufReader};
+use std::collections::{HashSet, VecDeque};
 use std::thread;
 use std::str;
 use std::collections::HashMap;
 use argparse::{ArgumentParser, StoreTrue, Store};
 use std::sync::{Arc, Mutex};
 use std::sync::mpsc::channel;
-use mio::*;
 use mio::tcp::{TcpListener, TcpStream};
+use mio::util::Slab;
+use mio::{
+	EventLoop,
+	Handler,
+	Interest,
+	PollOpt,
+	ReadHint,
+	Token,
+	TryRead,
+	TryWrite,
+};
+use mio::buf::{Buf, RingBuf};
 
 const SERVER: Token = Token(0);
 
@@ -23,54 +35,115 @@ fn main() {
 
 	println!("Welcome to Carcasian database! Listening on {}:{}", host, port);
 
-	let server: String = format!("{}:{}", host, port);
+	let addr = "127.0.0.1:8991".parse().unwrap();
 
-	let server = TcpListener::bind(&*server).unwrap();
+	let listener = TcpListener::bind(&addr).unwrap();
 
 	// Create an event loop
 	let mut event_loop = EventLoop::new().unwrap();
 
 	// Start listening for incoming connections
-	event_loop.register(&server, SERVER).unwrap();
+	event_loop.register(&listener, SERVER).unwrap();
+
+	let mut server = Server {
+		listener: listener,
+		connections: mio::util::Slab::new_starting_at(Token(3), 128)
+	};
 
 	// Start handling events
-	event_loop.run(&mut MyHandler(server)).unwrap();
+	event_loop.run(&mut server).unwrap();
 }
 
 // Define a handler to process the events
-struct MyHandler(TcpListener);
+struct Server {
+	listener: TcpListener,
+	connections: Slab<Connection>
+}
 
-impl Handler for MyHandler {
-	type Timeout = u8;
-	type Message = String;
+impl Handler for Server {
+	type Timeout = Token;
+	type Message = RingBuf;
 
-	fn readable(&mut self, event_loop: &mut EventLoop<Self>, token: Token, _: ReadHint)
+	fn readable(&mut self, reactor: &mut EventLoop<Self>, token: Token, _: ReadHint)
 	{
 		match token {
 			SERVER => {
-				let MyHandler(ref mut server) = *self;
-				let _ = server.accept();
+				let stream = match self.listener.accept().unwrap() {
+					Some(s) => s,
+					None => return,
+				};
 
-				println!("Client connected");
+				let connection = Connection::new(stream);
+
+				let tok = self.connections.insert(connection)
+					.ok().expect("Could not add connection to slab.");
+
+				self.connections[tok].token = tok;
+
+				reactor.register_opt(
+					&self.connections[tok].stream,
+					tok,
+					Interest::readable(),
+					PollOpt::edge() | PollOpt::oneshot()
+				).ok().expect("Could not register socket with event loop.");
+			},
+			tok => {
+				self.connections[tok].readable(reactor);
 			}
-			_ => panic!("unexpected token"),
 		}
 	}
 
 	fn timeout(&mut self, event_loop: &mut EventLoop<Self>, timeout: Self::Timeout)
 	{
-		println!("Client timeout");
 	}
 
 	fn interrupted(&mut self, event_loop: &mut EventLoop<Self>)
 	{
-		println!("Client disconnected");
 	}
 
-	fn notify(&mut self, event_loop: &mut EventLoop<MyHandler>, msg: Self::Message)
+	fn notify(&mut self, event_loop: &mut EventLoop<Self>, msg: Self::Message)
 	{
-		println!("Hello there: {}", msg);
 	}
+}
+
+impl Connection
+{
+	fn new(sock: TcpStream) -> Connection {
+		Connection {
+			stream: sock,
+			token: Token(0),
+			interest: Interest::hup(),
+			current_read: BufReader::new(RingBuf::new(4096)),
+			current_write: BufReader::new(RingBuf::new(4096)),
+			next_write: VecDeque::with_capacity(10),
+		}
+	}
+
+	fn readable(&mut self, reactor: &mut EventLoop<Server>) -> ()
+	{
+		let mut read = 0;
+
+		match self.stream.read(self.current_read.get_mut()) {
+			Ok(Some(r)) => {
+				read = r;
+			},
+			Ok(None) => panic!("We just got readable, but were unable to read from the socket?"),
+			Err(e) => return,
+		};
+
+		if read > 0 {
+			println!("{}", read);
+		}
+	}
+}
+
+struct Connection {
+	stream: TcpStream,
+	token: Token,
+	interest: Interest,
+	current_read: BufReader<RingBuf>,
+	current_write: BufReader<RingBuf>,
+	next_write: VecDeque<RingBuf>,
 }
 
 /*

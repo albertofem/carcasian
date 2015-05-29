@@ -17,4 +17,6 @@ path = "src/client.rs"
 
 [dependencies]
 argparse = "*"
-mio = "0.3.5"
+
+[dependencies.mio]
+git = "https://github.com/carllerche/mio"
