@@ -8,3 +8,6 @@ server:
 
 client:
 	cargo run --bin carcasian-client -- --host 127.0.0.1 --port 8991
+
+test:
+	cargo test --lib

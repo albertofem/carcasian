@@ -41,6 +41,16 @@ fn cli_loop(host: &String, port: &String, stream: &mut TcpStream) -> ()
 
 	println!("Sending to server: {}", input);
 
+    // convert string command to redis protocol (using module)
+
+    // send command to server
+
+    // read response from server and parse using redis protocl (module)
+
+    // convert back to string for human representation
+
+    // write response to client
+
 	stream.write(input.as_bytes());
 
 	let mut buf = [0];

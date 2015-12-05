@@ -1,7 +1,7 @@
 [package]
 name = "carcasian"
-version = "0.0.1"
-authors = ["albertofem"]
+version = "1.0.0-alpha"
+authors = ["Alberto Fernánde <albertofem@gmail.com>"]
 
 [lib]
 name = "carcasian"
@@ -17,6 +17,4 @@ path = "src/client.rs"
 
 [dependencies]
 argparse = "*"
-
-[dependencies.mio]
-git = "https://github.com/carllerche/mio"
+mioco = "*"
