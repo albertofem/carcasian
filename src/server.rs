@@ -1,6 +1,5 @@
 extern crate carcasian;
 extern crate argparse;
-extern crate mioco;
 
 use carcasian::database::storage::Storage;
 use carcasian::tcp::server;
@@ -14,5 +13,5 @@ fn main() {
     println!("Welcome to Carcasian database!");
     println!("Listening on {}:{}", host, port);
 
-    server::run()
+    server::run();
 }

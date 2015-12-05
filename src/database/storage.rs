@@ -6,8 +6,7 @@ pub struct Storage<'a> {
 }
 
 impl <'a> Storage<'a> {
-    pub fn new() -> Result<Storage<'a>, u8>
-    {
+    pub fn new() -> Result<Storage<'a>, u8> {
         let storage = Storage {
             data: Arc::new(Mutex::new(HashMap::new()))
         };
@@ -15,8 +14,7 @@ impl <'a> Storage<'a> {
         Ok(storage)
     }
 
-    pub fn get(&mut self, key: &'a str) -> Result<&'a str, u8>
-    {
+    pub fn get(&mut self, key: &'a str) -> Result<&'a str, u8> {
         let data = self.data.clone();
         let locked_data = data.lock().unwrap();
 
@@ -27,8 +25,7 @@ impl <'a> Storage<'a> {
         Ok(locked_data.get(key).unwrap())
     }
 
-    pub fn set(&mut self, key: &'a str, value: &'a str) -> Result<bool, u8>
-    {
+    pub fn set(&mut self, key: &'a str, value: &'a str) -> Result<bool, u8> {
         let data = self.data.clone();
         let mut locked_data = data.lock().unwrap();
 
@@ -37,8 +34,7 @@ impl <'a> Storage<'a> {
         Ok(true)
     }
 
-    pub fn del(&mut self, key: &'a str) -> Result<bool, u8>
-    {
+    pub fn del(&mut self, key: &'a str) -> Result<bool, u8> {
         let data = self.data.clone();
         let mut locked_data = data.lock().unwrap(); // lock will be free when out of scope
 
@@ -51,8 +47,7 @@ impl <'a> Storage<'a> {
         Ok(true)
     }
 
-    pub fn count_keys(&self) -> usize
-    {
+    pub fn count_keys(&self) -> usize {
         let data = self.data.clone();
         let locked_data = data.lock().unwrap();
 
@@ -60,18 +55,12 @@ impl <'a> Storage<'a> {
     }
 }
 
-// set value to storage
-
-// get info (call stats module)
-
-
 #[cfg(test)]
 mod tests {
     use super::Storage;
 
     #[test]
-    fn test_database_set_get()
-    {
+    fn test_database_set_get() {
         let mut storage = Storage::new().unwrap();
 
         assert_eq!(storage.set("test", "test").unwrap(), true);
@@ -79,16 +68,14 @@ mod tests {
     }
 
     #[test]
-    fn test_get_with_no_data()
-    {
+    fn test_get_with_no_data() {
         let mut storage = Storage::new().unwrap();
 
         assert_eq!(storage.get("test").is_err(), true);
     }
 
     #[test]
-    fn test_set_overwrite_key()
-    {
+    fn test_set_overwrite_key() {
         let mut storage = Storage::new().unwrap();
 
         assert_eq!(storage.set("test", "test").unwrap(), true);
@@ -99,8 +86,7 @@ mod tests {
     }
 
     #[test]
-    fn test_delete_key()
-    {
+    fn test_delete_key() {
         let mut storage = Storage::new().unwrap();
 
         assert_eq!(storage.set("test", "test").unwrap(), true);
@@ -111,8 +97,7 @@ mod tests {
     }
 
     #[test]
-    fn test_count_keys()
-    {
+    fn test_count_keys() {
         let mut storage = Storage::new().unwrap();
 
         assert_eq!(storage.set("test", "test").unwrap(), true);
