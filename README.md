@@ -1,5 +1,4 @@
-carcasian
-====
+![Carcasian](https://raw.githubusercontent.com/albertofem/carcasian/master/logo.png?token=AAY_gHkZzpg_RUUM3o4dndwvY67BsWLJks5WbXdNwA%3D%3D)
 
 In memory key-value database written in Rust using Redis protocol. This project was made to illustrate the contents of my lightning talk at Social Point HQ (Barcelona). This code should not be used in production, it's just made for learning purposes.
 
