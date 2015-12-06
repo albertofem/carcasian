@@ -5,6 +5,7 @@ use std::io::{Read,Write};
 use std::process::exit;
 use carcasian::*;
 use std::net::TcpStream;
+use carcasian::redis::protocol;
 
 fn main() {
 	let mut host: String = "".to_string();
@@ -39,7 +40,9 @@ fn cli_loop(host: &String, port: &String, stream: &mut TcpStream) -> ()
 
 	let mut input = util::io::read_line();
 
-	println!("Sending to server: {}", input);
+    let redis_command = protocol::get_redis_command_from_human_command(&input);
+
+	println!("Sending to server: {}", redis_command);
 
     // convert string command to redis protocol (using module)
 
@@ -51,7 +54,7 @@ fn cli_loop(host: &String, port: &String, stream: &mut TcpStream) -> ()
 
     // write response to client
 
-	stream.write(input.as_bytes());
+	stream.write(redis_command.as_bytes());
 
 	let mut buf = [0];
 	stream.read(&mut buf);

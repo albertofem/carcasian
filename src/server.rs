@@ -3,6 +3,7 @@ extern crate argparse;
 
 use carcasian::database::storage::Storage;
 use carcasian::tcp::server;
+use std::sync::{Arc, Mutex};
 
 fn main() {
     let mut host: String = "".to_string();
@@ -13,5 +14,7 @@ fn main() {
     println!("Welcome to Carcasian database!");
     println!("Listening on {}:{}", host, port);
 
-    server::run();
+    let storage = Arc::new(Mutex::new(Storage::new().unwrap()));
+
+    server::run(storage);
 }
