@@ -40,7 +40,7 @@ fn cli_loop(host: &String, port: &String, stream: &mut TcpStream) -> ()
 
 	let mut input = util::io::read_line();
 
-    let redis_command = protocol::get_redis_command_from_human_command(&input);
+    let redis_command = protocol::get_redis_command_from_human_command(input);
 
 	println!("Sending to server: {}", redis_command);
 

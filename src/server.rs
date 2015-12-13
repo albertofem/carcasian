@@ -14,7 +14,10 @@ fn main() {
     println!("Welcome to Carcasian database!");
     println!("Listening on {}:{}", host, port);
 
-    let storage = Arc::new(Mutex::new(Storage::new().unwrap()));
+    // We need to wrap our storage in a Arc with Mutex:
+    // Arc in order to have atomic reference counting and
+    // Mutex to prevent data races between threads
+    let storage = Arc::new(Mutex::new(Storage::new()));
 
     server::run(storage);
 }
