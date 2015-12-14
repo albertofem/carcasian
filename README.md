@@ -51,3 +51,4 @@ There is a great ton of comments in the code. Some of them could not be entirely
 
 The slides of this talk are available at speaker deck:
 
+[https://speakerdeck.com/albertofem/and-thou-shalt-have-rigour-a-gentle-introduction-to-rust](https://speakerdeck.com/albertofem/and-thou-shalt-have-rigour-a-gentle-introduction-to-rust)
