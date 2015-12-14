@@ -7,6 +7,12 @@ use database::storage::Storage;
 use std::sync::{Arc, Mutex};
 use redis::driver;
 
+/// This is the main TCP server structure
+///
+/// We have the data (which is wrapped in an Arc<Mutex<...>>
+/// because we are going to use it in multiple threads at
+/// the same time. Also containing host and port to the
+/// TcpListener
 pub struct Server {
     data: Arc<Mutex<Storage>>,
     host: String,

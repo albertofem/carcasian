@@ -2,6 +2,7 @@ extern crate argparse;
 
 use self::argparse::{ArgumentParser, Store};
 
+/// We use this to parse program arguments
 pub fn parse_host_args(host: &mut String, port: &mut String, description: &str) -> ()
 {
 	let mut ap = ArgumentParser::new();

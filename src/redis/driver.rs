@@ -10,6 +10,11 @@ pub enum DriverResponse {
     Quit
 }
 
+/// This function will handle a TCP raw message (String)
+/// received by the server a deduce an operation to be
+/// executed on the storage. We will take care of locking
+/// the data before working with it at this point (this
+/// is in a threaded context, of course!)
 pub fn handle_command(tcp_message: String, data: Arc<Mutex<Storage>>) -> Result<DriverResponse, u8> {
     let command = protocol::get_human_command_from_redis_command(tcp_message);
     let words: Vec<&str> = command.split(" ").collect();

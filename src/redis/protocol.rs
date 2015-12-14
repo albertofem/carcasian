@@ -4,6 +4,8 @@ const CLRF: &'static str = "\r\n";
 const DOLLAR: &'static str = "$";
 const ASTERISK: &'static str = "*";
 
+/// This function will convert from a Redis protocol
+/// formatted command to a human-friendly representation
 pub fn get_redis_command_from_human_command(command: String) -> String {
     let words = command.split(" ");
 
@@ -31,6 +33,9 @@ pub fn get_redis_command_from_human_command(command: String) -> String {
     redis_command
 }
 
+/// This will convert from a human-friendly representation
+/// of a Redis command to the Redis protocol specification (so
+/// it can be read by the server)
 pub fn get_human_command_from_redis_command(command: String) -> String {
     let tokens = command.split(CLRF);
 

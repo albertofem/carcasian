@@ -1,14 +1,17 @@
 use std::collections::{HashMap, HashSet};
 use std::fmt;
 
-// This is an Enum contain basic data definition
-// For now there is only plain values and sets
-// All data are Strings in order to simplify
+/// This is an Enum contain basic data definition
+/// For now there is only plain values and sets
+/// All data are Strings in order to simplify
 enum StorageValue {
     Plain(String),
     Set(HashSet<String>)
 }
 
+/// This enum is just a easy to read description
+/// of possible errors ocurred when consulting
+/// the database
 pub enum StorageError {
     KeyNotFound,
     InternalError
@@ -25,7 +28,11 @@ impl fmt::Debug for StorageError {
     }
 }
 
-// This is the main data structure we will be using
+/// This is the main data structure we will be using
+///
+/// It consist on a HashMap which has a String as key and
+/// a StorageValue (enum) as a value, which can be a plain
+/// value (also String) or a Set (HashSet)
 pub struct Storage {
     data: HashMap<String, StorageValue>,
 }
@@ -165,7 +172,6 @@ impl Storage {
         self.data.len()
     }
 }
-
 
 #[cfg(test)]
 mod tests {
