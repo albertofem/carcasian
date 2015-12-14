@@ -24,7 +24,7 @@ You first need to install Rust (nightly). You can use **[multirust](https://gith
 make server
 ```
 
-To fire up the server (by default, listening on port 8991). You can also use directly the cargo command:
+To fire up the server (by default, listening on port 8991). You can also use the cargo command directly:
 
 ```
 cargo run --bin carcasian-server -- --host 127.0.0.1 --port 8991
