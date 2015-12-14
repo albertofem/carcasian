@@ -20,7 +20,7 @@ impl Server {
     ///
     /// ```
     /// use carcasian::tcp::server::Server;
-    /// use carcasian::database:storage::Storage;
+    /// use carcasian::database::storage::Storage;
     ///
     /// let server = Server::new(Storage::new(), "127.0.0.1".to_string(), "8888".to_string());
     /// ```
@@ -36,7 +36,7 @@ impl Server {
     ///
     /// This will block the main thread preventing any more
     /// action from taking place
-    /// 
+    ///
     pub fn run(self) -> bool {
         // We 'move' everything from outside the closure
         // inside of it, in this case, 'storage'
