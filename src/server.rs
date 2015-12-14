@@ -3,7 +3,6 @@ extern crate argparse;
 
 use carcasian::database::storage::Storage;
 use carcasian::tcp::server;
-use std::sync::{Arc, Mutex};
 
 fn main() {
     let mut host: String = "".to_string();
@@ -17,7 +16,8 @@ fn main() {
     // We need to wrap our storage in a Arc with Mutex:
     // Arc in order to have atomic reference counting and
     // Mutex to prevent data races between threads
-    let storage = Arc::new(Mutex::new(Storage::new()));
+    let storage = Storage::new();
+    let server = server::Server::new(storage, host, port);
 
-    server::run(storage);
+    server.run();
 }

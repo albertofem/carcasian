@@ -1,4 +1,4 @@
-![Carcasian](https://raw.githubusercontent.com/albertofem/carcasian/master/logo.png?token=AAY_gHkZzpg_RUUM3o4dndwvY67BsWLJks5WbXdNwA%3D%3D)
+![Carcasian](https://raw.githubusercontent.com/albertofem/carcasian/master/logo.png)
 
 In memory key-value database written in Rust using Redis protocol. This project was made to illustrate the contents of my lightning talk at Social Point HQ (Barcelona). This code should not be used in production, it's just made for learning purposes.
 
@@ -8,11 +8,27 @@ This database uses a small subset of commands based on the Redis protocol: http:
 
 Currently, the following commands are supported:
 
-SET <key> <value>
-GET <key>
-INFO
+* SET <key> <value>
+* GET <key>
+* EXISTS <key>
+* SADD <key> <member>
+* SISMEMBER <key> <member>
+* SREM <key> <member>
+* SMEMBERS <key>
 
-The INFO will only account for operations per seconds and peak memory usage.
+# Compiling and running
+
+You first need to install Rust (nightly). You can use **[multirust](https://github.com/brson/multirust)** to do this in an easy way. When all is run, you can just run:
+
+```
+make server
+```
+
+To fire up the server (by default, listening on port 8991). You can also use directly the cargo command:
+
+```
+cargo run --bin carcasian-server -- --host 127.0.0.1 --port 8991
+``
 
 # Comments
 
@@ -22,5 +38,3 @@ There is a great ton of comments in the code. Some of them could not be entirely
 
 The slides of this talk are available at speaker deck:
 
-
-There is also a video available in SocialPoint engineering YouTube channel:

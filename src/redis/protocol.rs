@@ -2,6 +2,7 @@ use std::collections::HashSet;
 
 const CLRF: &'static str = "\r\n";
 const DOLLAR: &'static str = "$";
+const ASTERISK: &'static str = "*";
 
 pub fn get_redis_command_from_human_command(command: String) -> String {
     let words = command.split(" ");
@@ -21,7 +22,8 @@ pub fn get_redis_command_from_human_command(command: String) -> String {
             + &CLRF;
     }
 
-    redis_command = "*".to_string()
+    redis_command = "".to_string()
+        + &ASTERISK
         + &total_commands.to_string()
         + &CLRF
         + &redis_command;
@@ -124,5 +126,26 @@ mod tests {
         let expected_response = "*1\r\n$4\r\ntest\r\n";
 
         assert_eq!(get_array_response(&set), expected_response.to_string());
+    }
+
+    #[test]
+    fn test_get_nil_response() {
+        let expected_response = "$-1\r\n";
+
+        assert_eq!(get_nil_response(), expected_response.to_string());
+    }
+
+    #[test]
+    fn test_get_int_response() {
+        let expected_response = ":123\r\n";
+
+        assert_eq!(get_int_response(123), expected_response.to_string());
+    }
+
+    #[test]
+    fn test_get_err_response() {
+        let expected_response = "-ERR Whatever error!\r\n";
+
+        assert_eq!(get_err_response("ERR Whatever error!"), expected_response.to_string());
     }
 }

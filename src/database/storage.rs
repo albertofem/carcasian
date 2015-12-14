@@ -34,9 +34,19 @@ pub struct Storage {
 // commands we want to support
 impl Storage {
 
-    // This is a static method (not attached to an instance)
-    // used to create an instance of the structure. It's idiomatic
-    // to call these kind of methods as "new" in Rust
+    /// Creates a new storage instance
+    ///
+    /// This is a static method (not attached to an instance)
+    /// used to create an instance of the structure. It's idiomatic
+    /// to call these kind of methods as "new" in Rust
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use carcasian::database::storage::Storage;
+    ///
+    /// let storage = Storage::new();
+    /// ```
     pub fn new() -> Storage {
         Storage { data: HashMap::new() }
     }
@@ -57,8 +67,12 @@ impl Storage {
         }
     }
 
-    // As we are going to modify the HashMap (inserting)
-    // we need to get a reference to self '&mut self'
+    /// Sets a new plain key-value into the database
+    ///
+    ///
+    /// As we are going to modify the HashMap (inserting)
+    /// we need to get a reference to self '&mut self'
+    ///
     pub fn set(&mut self, key: String, value: String) -> Result<bool, StorageError> {
         // Here we instantiate a new enum value from the value
         // passed by the user
@@ -67,6 +81,10 @@ impl Storage {
         self.data.insert(key, value);
 
         Ok(true)
+    }
+
+    pub fn exists(&mut self, key: String) -> Result<bool, StorageError> {
+        Ok(self.data.contains_key(&key))
     }
 
     pub fn del(&mut self, key: String) -> Result<bool, StorageError> {
@@ -163,9 +181,17 @@ mod tests {
 
     #[test]
     fn test_get_with_no_data() {
-        let mut storage = Storage::new();
+        let storage = Storage::new();
 
         assert_eq!(storage.get("test".to_string()).is_err(), true);
+    }
+
+    #[test]
+    fn test_exists() {
+        let mut storage = Storage::new();
+
+        assert_eq!(storage.set("test".to_string(), "test".to_string()).unwrap(), true);
+        assert_eq!(storage.exists("test".to_string()).unwrap(), true);
     }
 
     #[test]

@@ -11,3 +11,6 @@ client:
 
 test:
 	cargo test --lib
+
+doc:
+	cargo doc --no-deps --open

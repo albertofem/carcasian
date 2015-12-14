@@ -2,18 +2,27 @@ use database::storage::Storage;
 use redis::protocol;
 use std::sync::{Arc, Mutex};
 
-pub fn handle_command(tcp_message: String, data: Arc<Mutex<Storage>>) -> String {
+///
+/// This is a enum that represent the response from the Driver
+///
+pub enum DriverResponse {
+    Response(String),
+    Quit
+}
+
+pub fn handle_command(tcp_message: String, data: Arc<Mutex<Storage>>) -> Result<DriverResponse, u8> {
     let command = protocol::get_human_command_from_redis_command(tcp_message);
-
-    println!("{}", command);
-
     let words: Vec<&str> = command.split(" ").collect();
-
-    let mut data = data.lock().unwrap();
 
     let command = words[0];
 
-    match command {
+    if command == "QUIT" {
+        return Ok(DriverResponse::Quit);
+    }
+
+    let mut data = data.lock().unwrap();
+
+    let driver_response = match command {
         "SET" => {
             let response = data.set(words[1].to_string(), words[2].to_string());
             match response {
@@ -27,6 +36,13 @@ pub fn handle_command(tcp_message: String, data: Arc<Mutex<Storage>>) -> String 
             match data {
                 Ok(value) => protocol::get_bulk_string_response(value),
                 Err(_) => protocol::get_nil_response(),
+            }
+        },
+
+        "EXISTS" => {
+            match data.exists(words[1].to_string()) {
+                Ok(r) => protocol::get_int_response(r as i32),
+                Err(_) => protocol::get_int_response(0)
             }
         },
 
@@ -82,5 +98,7 @@ pub fn handle_command(tcp_message: String, data: Arc<Mutex<Storage>>) -> String 
         _ => {
             protocol::get_err_response("Invalid command")
         }
-    }
+    };
+
+    Ok(DriverResponse::Response(driver_response))
 }
