@@ -12,6 +12,7 @@ Currently, the following commands are supported:
 
 * SET <key> <value>
 * GET <key>
+* DEL <key>
 * EXISTS <key>
 * SADD <key> <member>
 * SISMEMBER <key> <member>
@@ -30,7 +31,17 @@ To fire up the server (by default, listening on port 8991). You can also use the
 
 ```
 cargo run --bin carcasian-server -- --host 127.0.0.1 --port 8991
-``
+```
+
+# Documentation
+
+If you want to read the inline documentation, you can run:
+
+```
+make doc
+```
+
+This will open an HTML representation in your browser.
 
 # Comments
 
