@@ -17,6 +17,9 @@ pub enum DriverResponse {
 /// is in a threaded context, of course!)
 pub fn handle_command(tcp_message: String, data: Arc<Mutex<Storage>>) -> Result<DriverResponse, u8> {
     let command = protocol::get_human_command_from_redis_command(tcp_message);
+
+    println!("{}", command);
+
     let words: Vec<&str> = command.split(" ").collect();
 
     let command = words[0];
@@ -34,6 +37,15 @@ pub fn handle_command(tcp_message: String, data: Arc<Mutex<Storage>>) -> Result<
                 _ => protocol::get_ok_response()
             }
         },
+
+        // This is just a SET wrapper but ignoring
+        // expiration
+        "SETEX" => {
+            let response = data.set(words[1].to_string(), words[3].to_string());
+            match response {
+                _ => protocol::get_ok_response()
+            }
+        }
 
         "GET" => {
             let data = data.get(words[1].to_string());
@@ -92,7 +104,7 @@ pub fn handle_command(tcp_message: String, data: Arc<Mutex<Storage>>) -> Result<
 
             match response {
                 Ok(ref set) => protocol::get_array_response(set),
-                Err(_) => protocol::get_err_response("Nope")
+                Err(_) => protocol::get_empty_array_response()
             }
         },
 

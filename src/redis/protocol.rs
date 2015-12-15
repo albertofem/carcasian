@@ -63,7 +63,10 @@ pub fn get_bulk_string_response(response: &String) -> String {
 }
 
 pub fn get_array_response(set: &HashSet<String>) -> String {
-    let mut response = "*".to_string() + &set.len().to_string() + &CLRF;
+    let mut response = "".to_string()
+        + &ASTERISK
+        + &set.len().to_string()
+        + &CLRF;
 
     for element in set {
         response = response
@@ -91,6 +94,10 @@ pub fn get_int_response(int: i32) -> String {
 
 pub fn get_err_response(message: &str) -> String {
     "-".to_string() + message + &CLRF
+}
+
+pub fn get_empty_array_response() -> String {
+    "*0\r\n".to_string()
 }
 
 #[cfg(test)]
