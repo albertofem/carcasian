@@ -1,6 +1,6 @@
 ![Carcasian](https://raw.githubusercontent.com/albertofem/carcasian/master/logo.png)
 
-[![Build Status](https://travis-ci.com/albertofem/carcasian.svg?token=ydDBs98aEyX2bMHcZpEx&branch=master)](https://travis-ci.com/albertofem/carcasian)
+[![Build Status](https://travis-ci.org/albertofem/carcasian.svg?branch=master)](https://travis-ci.org/albertofem/carcasian)
 
 In memory key-value database written in Rust using Redis protocol. This project was made to illustrate the contents of my lightning talk at Social Point HQ (Barcelona). This code should not be used in production, it's just made for learning purposes.
 
