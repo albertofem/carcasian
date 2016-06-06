@@ -1,11 +1,13 @@
 extern crate mioco;
 
-use std::io::{Read, Write};
-use self::mioco::mio::tcp::{TcpSocket};
+use std::io::{self, Read, Write};
+use self::mioco::tcp::{TcpListener};
 use std::str;
 use database::storage::Storage;
 use std::sync::{Arc, Mutex};
 use redis::driver;
+use std::str::FromStr;
+use std::net::SocketAddr;
 
 /// This is the main TCP server structure
 ///
@@ -46,19 +48,15 @@ impl Server {
     pub fn run(self) -> bool {
         // We 'move' everything from outside the closure
         // inside of it, in this case, 'storage'
-        mioco::start(move |mioco| {
-            let addr = format!("{}:{}", self.host, self.port).parse().unwrap();
+        mioco::start(move || {
+            let addr = self.get_socket_addr();
 
-            let sock = try!(TcpSocket::v4());
-            try!(sock.bind(&addr));
-            let sock = try!(sock.listen(1024));
-
-            let sock = mioco.wrap(sock);
+            let listener = TcpListener::bind(&addr).unwrap();
 
             // Enter in a infinite loop to accept
             // al incoming connections
             loop {
-                let conn = sock.accept().unwrap();
+                let mut conn = listener.accept().unwrap();
 
                 // After accepting one connection, we first clone
                 // the reference to the storage (thus increasing the
@@ -67,9 +65,7 @@ impl Server {
 
                 // Move everything to another thread, including the
                 // Arc and the connection
-                mioco.spawn(move |mioco| {
-                    let mut conn = mioco.wrap(conn);
-
+                mioco::spawn(move || -> io::Result<()> {
                     // Initialize a buffer to store data from the
                     // socket
                     let mut buf = [0u8; 1024 * 16];
@@ -103,5 +99,11 @@ impl Server {
         });
 
         true
+    }
+
+    fn get_socket_addr(&self) -> SocketAddr {
+        let addr = format!("{}:{}", self.host, self.port);
+
+        FromStr::from_str(&addr).unwrap()
     }
 }

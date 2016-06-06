@@ -1,7 +1,7 @@
 [package]
 name = "carcasian"
 version = "1.0.0-alpha"
-authors = ["Alberto Fernánde <albertofem@gmail.com>"]
+authors = ["Alberto Fernández <albertofem@gmail.com>"]
 
 [lib]
 name = "carcasian"
